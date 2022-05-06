@@ -1,6 +1,6 @@
 # Visual Studio Code
-/.vscode
-!/.vscode/extensions.json
+/.vscode/*
+!/.vscode/misskey.code-workspace
 
 # Intelij-IDEA
 /.idea
@@ -31,7 +31,6 @@ run.bat
 api-docs.json
 *.log
 /redis
-*.code-workspace
 .DS_Store
 /files
 ormconfig.json

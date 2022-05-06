@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "../"
+		},
+		{
+			"path": "../packages/client"
+		},
+		{
+			"path": "../packages/backend"
+		}
+	],
+	"settings": {
+		"editor.formatOnSaveMode": "modificationsIfAvailable",
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": false
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"editorconfig.editorconfig",
+			"eg2.vscode-npm-script",
+			"dbaeumer.vscode-eslint",
+			"vue.volar",
+			"esbenp.prettier-vscode"
+		]
+	}
+}
