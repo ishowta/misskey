@@ -72,7 +72,7 @@ export const react = async (user: any, note: any, reaction: string): Promise<any
 export const uploadFile = (user: any, path?: string): Promise<any> => {
 		const formData = new FormData();
 		formData.append('i', user.token);
-		formData.append('file', fs.createReadStream(path || __dirname + '/resources/Lenna.png'));
+		formData.append('file', fs.createReadStream(path || new URL('./resources/Lenna.png', import.meta.url)));
 
 		return fetch(`http://localhost:${port}/api/drive/files/create`, {
 			method: 'post',
@@ -139,7 +139,7 @@ export const simpleGet = async (path: string, accept = '*/*'): Promise<{ status?
 
 export function launchServer(callbackSpawnedProcess: (p: childProcess.ChildProcess) => void, moreProcess: () => Promise<void> = async () => {}) {
 	return (done: (err?: Error) => any) => {
-		const p = childProcess.spawn('node', [__dirname + '/../index.js'], {
+		const p = childProcess.spawn('node', [new URL('../index.js', import.meta.url).pathname], {
 			stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
 			env: { NODE_ENV: 'test', PATH: process.env.PATH }
 		});
@@ -178,7 +178,7 @@ export function startServer(timeout = 30 * 1000): Promise<childProcess.ChildProc
 			rej('timeout to start');
 		}, timeout);
 
-		const p = childProcess.spawn('node', [__dirname + '/../built/index.js'], {
+		const p = childProcess.spawn('node', [new URL('../built/index.js', import.meta.url).pathname], {
 			stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
 			env: { NODE_ENV: 'test', PATH: process.env.PATH }
 		});

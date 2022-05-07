@@ -15,8 +15,8 @@ describe('users/notes', () => {
 	before(async () => {
 		p = await startServer();
 		alice = await signup({ username: 'alice' });
-		const jpg = await uploadFile(alice, __dirname + '/resources/Lenna.jpg');
-		const png = await uploadFile(alice, __dirname + '/resources/Lenna.png');
+		const jpg = await uploadFile(alice, new URL('./resources/Lenna.jpg', import.meta.url).pathname);
+		const png = await uploadFile(alice, new URL('./resources/Lenna.png', import.meta.url).pathname);
 		jpgNote = await post(alice, {
 			fileIds: [jpg.id]
 		});
