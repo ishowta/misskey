@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - develop
+      - custom
   pull_request:
 
 jobs:
