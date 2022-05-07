@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+import execa from 'execa';
 
 (async () => {
 	// なぜかchokidarが動かない影響で、watchされない
