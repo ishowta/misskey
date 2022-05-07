@@ -1,10 +1,15 @@
 import * as assert from 'assert';
-import { async } from './utils.js';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 import { getFileInfo } from '../src/misc/get-file-info.js';
+import { async } from './utils.js';
+
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 describe('Get file info', () => {
 	it('Empty file', async (async () => {
-		const path = new URL('./resources/emptyfile', import.meta.url).pathname;
+		const path = `${_dirname}/resources/emptyfile`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -22,7 +27,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Generic JPEG', async (async () => {
-		const path = new URL('./resources/Lenna.jpg', import.meta.url).pathname;
+		const path = `${_dirname}/resources/Lenna.jpg`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -40,7 +45,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Generic APNG', async (async () => {
-		const path = new URL('./resources/anime.png', import.meta.url).pathname;
+		const path = `${_dirname}/resources/anime.png`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -58,7 +63,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Generic AGIF', async (async () => {
-		const path = new URL('./resources/anime.gif', import.meta.url).pathname;
+		const path = `${_dirname}/resources/anime.gif`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -76,7 +81,7 @@ describe('Get file info', () => {
 	}));
 
 	it('PNG with alpha', async (async () => {
-		const path = new URL('./resources/with-alpha.png', import.meta.url).pathname;
+		const path = `${_dirname}/resources/with-alpha.png`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -94,7 +99,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Generic SVG', async (async () => {
-		const path = new URL('./resources/image.svg', import.meta.url).pathname;
+		const path = `${_dirname}/resources/image.svg`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -113,7 +118,7 @@ describe('Get file info', () => {
 
 	it('SVG with XML definition', async (async () => {
 		// https://github.com/misskey-dev/misskey/issues/4413
-		const path = new URL('./resources/with-xml-def.svg', import.meta.url).pathname;
+		const path = `${_dirname}/resources/with-xml-def.svg`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -131,7 +136,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Dimension limit', async (async () => {
-		const path = new URL('./resources/25000x25000.png', import.meta.url).pathname;
+		const path = `${_dirname}/resources/25000x25000.png`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
@@ -149,7 +154,7 @@ describe('Get file info', () => {
 	}));
 
 	it('Rotate JPEG', async (async () => {
-		const path = new URL('./resources/rotate.jpg', import.meta.url).pathname;
+		const path = `${_dirname}/resources/rotate.jpg`;
 		const info = await getFileInfo(path) as any;
 		delete info.warnings;
 		delete info.blurhash;
