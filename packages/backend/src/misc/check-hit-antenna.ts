@@ -6,6 +6,7 @@ import { getFullApAccount } from './convert-host.js';
 import * as Acct from '@/misc/acct.js';
 import { Packed } from './schema.js';
 import { Cache } from './cache.js';
+import config from '@/config/index.js';
 
 const blockingCache = new Cache<User['id'][]>(1000 * 60 * 5);
 
@@ -53,6 +54,29 @@ export async function checkHitAntenna(antenna: Antenna, note: (Note | Packed<'No
 		if (!accts.includes(getFullApAccount(noteUser.username, noteUser.host).toLowerCase())) return false;
 	}
 
+	const checkKeywordMatched = (keyword: string): boolean => {
+		const specialKeywordList: {
+			regex: RegExp;
+			checker: (regexResult: RegExpExecArray) => boolean;
+		}[] = [
+			{
+				regex: /^host:(.+)$/,
+				checker: result => (noteUser.host ?? config.host) === result[1],
+			},
+		];
+
+		const specialKeyword = specialKeywordList.find(specialKeyword =>
+			specialKeyword.regex.test(keyword),
+		);
+		if (specialKeyword) {
+			return specialKeyword.checker(specialKeyword.regex.exec(keyword)!);
+		}
+
+		return antenna.caseSensitive
+			? note.text!.includes(keyword)
+			: note.text!.toLowerCase().includes(keyword.toLowerCase());
+	};
+
 	const keywords = antenna.keywords
 		// Clean up
 		.map(xs => xs.filter(x => x !== ''))
@@ -61,12 +85,7 @@ export async function checkHitAntenna(antenna: Antenna, note: (Note | Packed<'No
 	if (keywords.length > 0) {
 		if (note.text == null) return false;
 
-		const matched = keywords.some(and =>
-			and.every(keyword =>
-				antenna.caseSensitive
-					? note.text!.includes(keyword)
-					: note.text!.toLowerCase().includes(keyword.toLowerCase())
-			));
+		const matched = keywords.some(and => and.every(checkKeywordMatched));
 
 		if (!matched) return false;
 	}
@@ -79,12 +98,7 @@ export async function checkHitAntenna(antenna: Antenna, note: (Note | Packed<'No
 	if (excludeKeywords.length > 0) {
 		if (note.text == null) return false;
 
-		const matched = excludeKeywords.some(and =>
-			and.every(keyword =>
-				antenna.caseSensitive
-					? note.text!.includes(keyword)
-					: note.text!.toLowerCase().includes(keyword.toLowerCase())
-			));
+		const matched = excludeKeywords.some(and => and.every(checkKeywordMatched));
 
 		if (matched) return false;
 	}
