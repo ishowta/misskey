@@ -416,7 +416,7 @@ export default define(meta, paramDef, async (ps, me) => {
 	}
 
 	await db.transaction(async transactionalEntityManager => {
-		const q = transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').select('id').orderBy('id', 'DESC');
+		const q = transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').orderBy('id', 'DESC');
 		apiLogger.info(q.getSql());
 		const metas = await q.getMany();
 
