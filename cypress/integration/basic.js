@@ -1,6 +1,6 @@
 describe('Before setup instance', () => {
 	beforeEach(() => {
-		cy.on('window:before:load', win => {
+		cy.window(win => {
 			win.indexedDB.deleteDatabase('keyval-store');
 		});
 		cy.request('POST', '/api/reset-db').as('reset');
@@ -14,15 +14,15 @@ describe('Before setup instance', () => {
 		cy.wait(1000);
 	});
 
-  it('successfully loads', () => {
-    cy.visit('/');
-  });
+	it('successfully loads', () => {
+		cy.visit('/');
+	});
 
 	it('setup instance', () => {
-    cy.visit('/');
+		cy.visit('/');
 
 		cy.intercept('POST', '/api/admin/accounts/create').as('signup');
-	
+
 		cy.get('[data-cy-admin-username] input').type('admin');
 		cy.get('[data-cy-admin-password] input').type('admin1234');
 		cy.get('[data-cy-admin-ok]').click();
@@ -30,12 +30,12 @@ describe('Before setup instance', () => {
 		// なぜか動かない
 		//cy.wait('@signup').should('have.property', 'response.statusCode');
 		cy.wait('@signup');
-  });
+	});
 });
 
 describe('After setup instance', () => {
 	beforeEach(() => {
-		cy.on('window:before:load', win => {
+		cy.window(win => {
 			win.indexedDB.deleteDatabase('keyval-store');
 		});
 		cy.request('POST', '/api/reset-db').as('reset');
@@ -46,7 +46,9 @@ describe('After setup instance', () => {
 		cy.request('POST', '/api/admin/accounts/create', {
 			username: 'admin',
 			password: 'pass',
-		}).its('body').as('admin');
+		})
+			.its('body')
+			.as('admin');
 	});
 
 	afterEach(() => {
@@ -55,9 +57,9 @@ describe('After setup instance', () => {
 		cy.wait(1000);
 	});
 
-  it('successfully loads', () => {
-    cy.visit('/');
-  });
+	it('successfully loads', () => {
+		cy.visit('/');
+	});
 
 	it('signup', () => {
 		cy.visit('/');
@@ -71,12 +73,12 @@ describe('After setup instance', () => {
 		cy.get('[data-cy-signup-submit]').click();
 
 		cy.wait('@signup');
-  });
+	});
 });
 
 describe('After user signup', () => {
 	beforeEach(() => {
-		cy.on('window:before:load', win => {
+		cy.window(win => {
 			win.indexedDB.deleteDatabase('keyval-store');
 		});
 		cy.request('POST', '/api/reset-db').as('reset');
@@ -87,13 +89,17 @@ describe('After user signup', () => {
 		cy.request('POST', '/api/admin/accounts/create', {
 			username: 'admin',
 			password: 'pass',
-		}).its('body').as('admin');
+		})
+			.its('body')
+			.as('admin');
 
 		// ユーザー作成
 		cy.request('POST', '/api/signup', {
 			username: 'alice',
 			password: 'alice1234',
-		}).its('body').as('alice');
+		})
+			.its('body')
+			.as('alice');
 	});
 
 	afterEach(() => {
@@ -102,9 +108,9 @@ describe('After user signup', () => {
 		cy.wait(1000);
 	});
 
-  it('successfully loads', () => {
-    cy.visit('/');
-  });
+	it('successfully loads', () => {
+		cy.visit('/');
+	});
 
 	it('signin', () => {
 		cy.visit('/');
@@ -117,9 +123,9 @@ describe('After user signup', () => {
 		cy.get('[data-cy-signin-password] input').type('alice1234{enter}');
 
 		cy.wait('@signin');
-  });
+	});
 
-	it('suspend', function() {
+	it('suspend', function () {
 		cy.request('POST', '/api/admin/suspend-user', {
 			i: this.admin.token,
 			userId: this.alice.id,
@@ -138,7 +144,7 @@ describe('After user signup', () => {
 
 describe('After user singed in', () => {
 	beforeEach(() => {
-		cy.on('window:before:load', win => {
+		cy.window(win => {
 			win.indexedDB.deleteDatabase('keyval-store');
 		});
 		cy.request('POST', '/api/reset-db').as('reset');
@@ -149,13 +155,17 @@ describe('After user singed in', () => {
 		cy.request('POST', '/api/admin/accounts/create', {
 			username: 'admin',
 			password: 'pass',
-		}).its('body').as('admin');
+		})
+			.its('body')
+			.as('admin');
 
 		// ユーザー作成
 		cy.request('POST', '/api/signup', {
 			username: 'alice',
 			password: 'alice1234',
-		}).its('body').as('alice');
+		})
+			.its('body')
+			.as('alice');
 
 		cy.visit('/');
 
@@ -174,19 +184,19 @@ describe('After user singed in', () => {
 		cy.wait(1000);
 	});
 
-  it('successfully loads', () => {
-    cy.visit('/');
-  });
+	it('successfully loads', () => {
+		cy.visit('/');
+	});
 
 	it('note', () => {
-    cy.visit('/');
+		cy.visit('/');
 
 		cy.get('[data-cy-open-post-form]').click();
 		cy.get('[data-cy-post-form-text]').type('Hello, Misskey!');
 		cy.get('[data-cy-open-post-form-submit]').click();
 
 		cy.contains('Hello, Misskey!');
-  });
+	});
 });
 
 // TODO: 投稿フォームの公開範囲指定のテスト
