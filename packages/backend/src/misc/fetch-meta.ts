@@ -1,6 +1,6 @@
 import { db } from '@/db/postgre.js';
 import { Meta } from '@/models/entities/meta.js';
-import { apiLogger } from '@/server/api/logger';
+import { apiLogger } from '@/server/api/logger.js';
 
 let cache: Meta;
 
