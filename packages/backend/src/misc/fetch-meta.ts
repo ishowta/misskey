@@ -20,9 +20,22 @@ export async function fetchMeta(noCache = false): Promise<Meta> {
 			cache = meta;
 			return meta;
 		} else {
-			const saved = await transactionalEntityManager.save(Meta, {
-				id: 'x',
-			}) as Meta;
+			// saveだと複数のfetch-metaが同時に呼ばれたときにタイミングによってはinsertしようとして失敗してしまうので、アトミックなupsertを使う
+			await transactionalEntityManager.upsert(
+				Meta,
+				{
+					id: 'x',
+				},
+				['id'],
+			);
+
+			// トランザクション内で直前にupsertしているので必ずある
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const saved = (await transactionalEntityManager.findOne(Meta, {
+				where: {
+					id: 'x',
+				},
+			}))!;
 
 			cache = saved;
 			return saved;
