@@ -1,6 +1,5 @@
 import { db } from '@/db/postgre.js';
 import { Meta } from '@/models/entities/meta.js';
-import { apiLogger } from '@/server/api/logger.js';
 
 let cache: Meta;
 
@@ -9,10 +8,11 @@ export async function fetchMeta(noCache = false): Promise<Meta> {
 
 	return await db.transaction(async transactionalEntityManager => {
 		// 過去のバグでレコードが複数出来てしまっている可能性があるので新しいIDを優先する
-		console.log(transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').select('id').setLock('pessimistic_read').getSql());
-		const q = transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').select('id').setLock('pessimistic_read').orderBy('id', 'DESC');
-		apiLogger.info(q.getSql());
-		const metas = await q.getMany();
+		const metas = await transactionalEntityManager.find(Meta, {
+			order: {
+				id: 'DESC',
+			},
+		});
 
 		const meta = metas[0];
 
@@ -20,9 +20,19 @@ export async function fetchMeta(noCache = false): Promise<Meta> {
 			cache = meta;
 			return meta;
 		} else {
-			const saved = (await transactionalEntityManager.save(Meta, {
-				id: 'x',
-			})) as Meta;
+			await transactionalEntityManager.upsert(
+				Meta,
+				{
+					id: 'x',
+				},
+				['id'],
+			);
+
+			const saved = (await transactionalEntityManager.findOne(Meta, {
+				where: {
+					id: 'x',
+				},
+			}))!;
 
 			cache = saved;
 			return saved;

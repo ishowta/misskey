@@ -3,7 +3,6 @@ import { Meta } from '@/models/entities/meta.js';
 import { insertModerationLog } from '@/services/insert-moderation-log.js';
 import { DB_MAX_NOTE_TEXT_LENGTH } from '@/misc/hard-limits.js';
 import { db } from '@/db/postgre.js';
-import { apiLogger } from '../../logger.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -416,9 +415,11 @@ export default define(meta, paramDef, async (ps, me) => {
 	}
 
 	await db.transaction(async transactionalEntityManager => {
-		const q = transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').orderBy('id', 'DESC');
-		apiLogger.info(q.getSql());
-		const metas = await q.getMany();
+		const metas = await transactionalEntityManager.find(Meta, {
+			order: {
+				id: 'DESC',
+			},
+		});
 
 		const meta = metas[0];
 
