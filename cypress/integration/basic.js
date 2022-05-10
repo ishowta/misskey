@@ -1,6 +1,8 @@
 describe('Before setup instance', () => {
 	beforeEach(() => {
-		cy.visit('/flush');
+		cy.on('window:before:load', win => {
+			win.indexedDB.deleteDatabase('keyval-store');
+		});
 		cy.request('POST', '/api/reset-db').as('reset');
 		cy.get('@reset').its('status').should('equal', 204);
 		cy.reload(true);
@@ -33,7 +35,9 @@ describe('Before setup instance', () => {
 
 describe('After setup instance', () => {
 	beforeEach(() => {
-		cy.visit('/flush');
+		cy.on('window:before:load', win => {
+			win.indexedDB.deleteDatabase('keyval-store');
+		});
 		cy.request('POST', '/api/reset-db').as('reset');
 		cy.get('@reset').its('status').should('equal', 204);
 		cy.reload(true);
@@ -72,7 +76,9 @@ describe('After setup instance', () => {
 
 describe('After user signup', () => {
 	beforeEach(() => {
-		cy.visit('/flush');
+		cy.on('window:before:load', win => {
+			win.indexedDB.deleteDatabase('keyval-store');
+		});
 		cy.request('POST', '/api/reset-db').as('reset');
 		cy.get('@reset').its('status').should('equal', 204);
 		cy.reload(true);
@@ -132,7 +138,9 @@ describe('After user signup', () => {
 
 describe('After user singed in', () => {
 	beforeEach(() => {
-		cy.visit('/flush');
+		cy.on('window:before:load', win => {
+			win.indexedDB.deleteDatabase('keyval-store');
+		});
 		cy.request('POST', '/api/reset-db').as('reset');
 		cy.get('@reset').its('status').should('equal', 204);
 		cy.reload(true);
