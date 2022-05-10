@@ -3,6 +3,7 @@ import { Meta } from '@/models/entities/meta.js';
 import { insertModerationLog } from '@/services/insert-moderation-log.js';
 import { DB_MAX_NOTE_TEXT_LENGTH } from '@/misc/hard-limits.js';
 import { db } from '@/db/postgre.js';
+import { apiLogger } from '../../logger.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -18,15 +19,27 @@ export const paramDef = {
 		disableLocalTimeline: { type: 'boolean', nullable: true },
 		disableGlobalTimeline: { type: 'boolean', nullable: true },
 		useStarForReactionFallback: { type: 'boolean', nullable: true },
-		pinnedUsers: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
-		hiddenTags: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
-		blockedHosts: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
+		pinnedUsers: {
+			type: 'array',
+			nullable: true,
+			items: {
+				type: 'string',
+			},
+		},
+		hiddenTags: {
+			type: 'array',
+			nullable: true,
+			items: {
+				type: 'string',
+			},
+		},
+		blockedHosts: {
+			type: 'array',
+			nullable: true,
+			items: {
+				type: 'string',
+			},
+		},
 		themeColor: { type: 'string', nullable: true },
 		mascotImageUrl: { type: 'string', nullable: true },
 		bannerUrl: { type: 'string', nullable: true },
@@ -51,13 +64,19 @@ export const paramDef = {
 		proxyAccountId: { type: 'string', format: 'misskey:id', nullable: true },
 		maintainerName: { type: 'string', nullable: true },
 		maintainerEmail: { type: 'string', nullable: true },
-		pinnedPages: { type: 'array', items: {
-			type: 'string',
-		} },
+		pinnedPages: {
+			type: 'array',
+			items: {
+				type: 'string',
+			},
+		},
 		pinnedClipId: { type: 'string', format: 'misskey:id', nullable: true },
-		langs: { type: 'array', items: {
-			type: 'string',
-		} },
+		langs: {
+			type: 'array',
+			items: {
+				type: 'string',
+			},
+		},
 		summalyProxy: { type: 'string', nullable: true },
 		deeplAuthKey: { type: 'string', nullable: true },
 		deeplIsPro: { type: 'boolean' },
@@ -397,7 +416,9 @@ export default define(meta, paramDef, async (ps, me) => {
 	}
 
 	await db.transaction(async transactionalEntityManager => {
-		const metas = await transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').orderBy('id', 'DESC').execute();
+		const q = transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').select('id').orderBy('id', 'DESC');
+		apiLogger.info(q.getSql());
+		const metas = await q.getMany();
 
 		const meta = metas[0];
 
