@@ -397,13 +397,7 @@ export default define(meta, paramDef, async (ps, me) => {
 	}
 
 	await db.transaction(async transactionalEntityManager => {
-		await transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').execute();
-
-		const metas = await transactionalEntityManager.find(Meta, {
-			order: {
-				id: 'DESC',
-			},
-		});
+		const metas = await transactionalEntityManager.getRepository(Meta).createQueryBuilder('meta').setLock('pessimistic_read').orderBy('id', 'DESC').execute();
 
 		const meta = metas[0];
 
