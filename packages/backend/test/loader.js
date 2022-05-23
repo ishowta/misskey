@@ -13,10 +13,10 @@ import { pathToFileURL } from 'url';
 const tsconfig = loadConfig();
 const matchPath = createMatchPath(tsconfig.absoluteBaseUrl, tsconfig.paths);
 
-function resolve(specifier, ctx, defaultResolve) {
+export function resolve(specifier, ctx, defaultResolve) {
 	let resolvedSpecifier;
-	const mayTranspiled = specifier.endsWith('.js');
-	if (mayTranspiled) {
+	if (specifier.endsWith('.js')) {
+		// maybe transpiled
 		const specifierWithoutExtension = specifier.substring(0, specifier.length - '.js'.length);
 		const matchedSpecifier = matchPath(specifierWithoutExtension);
 		if (matchedSpecifier) {
@@ -31,4 +31,4 @@ function resolve(specifier, ctx, defaultResolve) {
 	return resolveTs(resolvedSpecifier ?? specifier, ctx, defaultResolve);
 }
 
-export { resolve, load };
+export { load };
