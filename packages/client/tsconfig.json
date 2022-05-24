@@ -5,7 +5,7 @@
 		"noImplicitAny": false,
 		"noImplicitReturns": true,
 		"noUnusedParameters": false,
-		"noUnusedLocals": true,
+		"noUnusedLocals": false,
 		"noFallthroughCasesInSwitch": true,
 		"declaration": false,
 		"sourceMap": false,
@@ -21,6 +21,7 @@
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
 		"useDefineForClassFields": true,
+		"noEmit": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
