@@ -70,6 +70,7 @@ jobs:
           headless: true
           browser: ${{ matrix.browser }}
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: ${{ matrix.browser }}-cypress-top
           path: top.log
