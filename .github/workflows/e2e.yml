@@ -59,6 +59,8 @@ jobs:
       # https://github.com/cypress-io/cypress/issues/4351#issuecomment-559489091
       - name: ALSA Env
         run: echo -e 'pcm.!default {\n type hw\n card 0\n}\n\nctl.!default {\n type hw\n card 0\n}' > ~/.asoundrc
+      - name: Top daemon
+        run: node ./scripts/top.js > top.log & echo "running"
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -67,3 +69,7 @@ jobs:
           wait-on: "http://localhost:61812"
           headless: true
           browser: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.browser }}-cypress-top
+          path: top.log
